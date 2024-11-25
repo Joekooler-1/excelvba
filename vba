@@ -4,8 +4,8 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     Dim wsNew As Worksheet
     Dim lastRow As Long, lastRowK As Long
     Dim uniqueValues As Collection
-    Dim cell As Range ' Explicitly declare as Range
-    Dim filterValue As String
+    Dim cell As Range
+    Dim filterValue As Variant ' Use Variant to handle any data type
     Dim sheetName As String
     Dim totalSum As Double
     Dim workbookTitle As String
@@ -28,9 +28,9 @@ Sub FilterAndSplitDataWithWorkbookTitle()
 
     ' Create a collection to store unique values in Column B
     Set uniqueValues = New Collection
-    On Error Resume Next
+    On Error Resume Next ' Avoid errors from duplicate keys
     For Each cell In wsSource.Range("B2:B" & lastRow) ' Assuming data starts from Row 2
-        uniqueValues.Add cell.Value, CStr(cell.Value)
+        If cell.Value <> "" Then uniqueValues.Add cell.Value, CStr(cell.Value)
     Next cell
     On Error GoTo 0
 
