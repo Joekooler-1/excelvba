@@ -19,12 +19,18 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     ' Determine the last row in Column B
     lastRow = wsSource.Cells(wsSource.Rows.Count, "B").End(xlUp).Row
 
-    ' Create a new workbook
+    ' Create a new workbook and remove default sheets
     Set wbNew = Application.Workbooks.Add
+    Application.DisplayAlerts = False
+    Do While wbNew.Sheets.Count > 0
+        wbNew.Sheets(1).Delete
+    Loop
+    Application.DisplayAlerts = True
 
-    ' Copy unfiltered data to the first sheet in the new workbook
-    wsSource.UsedRange.Copy Destination:=wbNew.Sheets(1).Range("A1")
-    wbNew.Sheets(1).Name = "Unfiltered Data"
+    ' Add the unfiltered data as the first sheet
+    Set wsNew = wbNew.Sheets.Add
+    wsNew.Name = "Unfiltered Data"
+    wsSource.UsedRange.Copy Destination:=wsNew.Range("A1")
 
     ' Create a collection to store unique values in Column B
     Set uniqueValues = New Collection
@@ -38,7 +44,7 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     Application.ScreenUpdating = False
     For Each filterValue In uniqueValues
         ' Add a new worksheet to the new workbook
-        Set wsNew = wbNew.Sheets.Add
+        Set wsNew = wbNew.Sheets.Add(After:=wbNew.Sheets(wbNew.Sheets.Count))
 
         ' Truncate and sanitize the filter value to create a valid sheet name
         sheetName = Left(filterValue, 16)
@@ -65,17 +71,9 @@ Sub FilterAndSplitDataWithWorkbookTitle()
             totalSum = Application.WorksheetFunction.Sum(wsNew.Range("K2:K" & lastRowK))
             wsNew.Cells(lastRowK + 2, "J").Value = "TOTAL:"
             wsNew.Cells(lastRowK + 2, "K").Value = totalSum
+            wsNew.Cells(lastRowK + 2, "K").NumberFormat = "_($* #,##0.00_);_($* (#,##0.00);_($* ""-""??_);_(@_)" ' Set to Accounting format
         End If
     Next filterValue
-
-    ' Add Total for Unfiltered Data
-    Set wsNew = wbNew.Sheets("Unfiltered Data")
-    lastRowK = wsNew.Cells(wsNew.Rows.Count, "K").End(xlUp).Row
-    If lastRowK >= 2 Then ' Ensure there's data in Column K
-        totalSum = Application.WorksheetFunction.Sum(wsNew.Range("K2:K" & lastRowK))
-        wsNew.Cells(lastRowK + 2, "J").Value = "TOTAL:"
-        wsNew.Cells(lastRowK + 2, "K").Value = totalSum
-    End If
 
     Application.ScreenUpdating = True
 
