@@ -19,18 +19,20 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     ' Determine the last row in Column B
     lastRow = wsSource.Cells(wsSource.Rows.Count, "B").End(xlUp).Row
 
-    ' Create a new workbook and remove default sheets
+    ' Create a new workbook
     Set wbNew = Application.Workbooks.Add
-    Application.DisplayAlerts = False
-    Do While wbNew.Sheets.Count > 0
-        wbNew.Sheets(1).Delete
-    Loop
-    Application.DisplayAlerts = True
 
     ' Add the unfiltered data as the first sheet
     Set wsNew = wbNew.Sheets.Add
     wsNew.Name = "Unfiltered Data"
     wsSource.UsedRange.Copy Destination:=wsNew.Range("A1")
+
+    ' Delete all default sheets after adding "Unfiltered Data"
+    Application.DisplayAlerts = False
+    Do While wbNew.Sheets.Count > 1
+        wbNew.Sheets(2).Delete
+    Loop
+    Application.DisplayAlerts = True
 
     ' Create a collection to store unique values in Column B
     Set uniqueValues = New Collection
