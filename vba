@@ -4,7 +4,7 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     Dim wsNew As Worksheet
     Dim lastRow As Long, lastRowK As Long
     Dim uniqueValues As Collection
-    Dim cell As Range
+    Dim cell As Range ' Ensure cell is declared as Range
     Dim filterValue As String
     Dim sheetName As String
     Dim totalSum As Double
