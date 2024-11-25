@@ -27,6 +27,15 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     wsNew.Name = "Unfiltered Data"
     wsSource.UsedRange.Copy Destination:=wsNew.Range("A1")
 
+    ' Add Total for Column K in the "Unfiltered Data" sheet
+    lastRowK = wsNew.Cells(wsNew.Rows.Count, "K").End(xlUp).Row
+    If lastRowK >= 2 Then ' Ensure there's data in Column K
+        totalSum = Application.WorksheetFunction.Sum(wsNew.Range("K2:K" & lastRowK))
+        wsNew.Cells(lastRowK + 2, "J").Value = "TOTAL:"
+        wsNew.Cells(lastRowK + 2, "K").Value = totalSum
+        wsNew.Cells(lastRowK + 2, "K").NumberFormat = "_($* #,##0.00_);_($* (#,##0.00);_($* ""-""??_);_(@_)" ' Set to Accounting format
+    End If
+
     ' Delete all default sheets after adding "Unfiltered Data"
     Application.DisplayAlerts = False
     Do While wbNew.Sheets.Count > 1
