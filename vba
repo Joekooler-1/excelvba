@@ -4,7 +4,7 @@ Sub FilterAndSplitDataWithWorkbookTitle()
     Dim wsNew As Worksheet
     Dim lastRow As Long, lastRowK As Long
     Dim uniqueValues As Collection
-    Dim cell As Range ' Ensure cell is declared as Range
+    Dim cell As Range
     Dim filterValue As String
     Dim sheetName As String
     Dim totalSum As Double
@@ -40,14 +40,8 @@ Sub FilterAndSplitDataWithWorkbookTitle()
         ' Add a new worksheet to the new workbook
         Set wsNew = wbNew.Sheets.Add
 
-        ' Check if the value starts with "Composer" and truncate to 16 characters if so, otherwise use the full value
-        If Left(filterValue, 7) = "Composer" Then
-            sheetName = Left(filterValue, 16) ' Use only the first 16 characters if it starts with "Composer"
-        Else
-            sheetName = filterValue ' Use the full name
-        End If
-
-        ' Sanitize sheet name to remove invalid characters
+        ' Truncate and sanitize the filter value to create a valid sheet name
+        sheetName = Left(filterValue, 16)
         sheetName = Application.Substitute(sheetName, "/", "_")
         sheetName = Application.Substitute(sheetName, "\", "_")
         sheetName = Application.Substitute(sheetName, ":", "_")
@@ -55,8 +49,6 @@ Sub FilterAndSplitDataWithWorkbookTitle()
         sheetName = Application.Substitute(sheetName, "*", "_")
         sheetName = Application.Substitute(sheetName, "[", "_")
         sheetName = Application.Substitute(sheetName, "]", "_")
-
-        ' Assign the sheet name
         wsNew.Name = sheetName
 
         ' Copy the header row to the new sheet
